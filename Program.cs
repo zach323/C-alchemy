@@ -11,7 +11,7 @@ namespace CSharp_XMLFinder
     {
         static void Main(string[] args)
         {
-            StreamReader reader = new StreamReader("C:\\Users\\zrebstock\\Documents\\python4inf.txt");
+            StreamReader reader = new StreamReader("C:\\Users\\User\\Documents\\python4inf.txt");
             string sLine = "";
             int counter = 0;
             string target = "<meterNo>";
