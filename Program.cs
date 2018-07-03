@@ -3,157 +3,362 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Diagnostics;
 
-namespace CSharp_XMLFinder
+namespace TicTacToe
 {
     class Program
     {
         static void Main(string[] args)
         {
-            StreamReader reader = new StreamReader("C:\\Users\\zrebstock\\Documents\\python4inf.txt");
-
-            Stopwatch stopwatch = new Stopwatch();
-            
-            
-            string sLine = "";
-
-            int counter = 0;
-            string target;
-            string found_string = "";
-            int next_index = 0;
-            int line_number = 0;
-            Console.WriteLine("Enter string you want to find");
-            target = Console.ReadLine();
-            stopwatch.Start();
-            void search1()
+            int curr_player = 1;
+            char[,] board = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+            int user_input = 0;
+            char p1_marker = 'x';
+            char p2_marker = 'o';
+            DisplayBoard(board);
+            bool reset;
+            bool win = CheckWin(board);
+           
+            while (win == false)
             {
-                while (sLine != null)
+                //game logic for player 1
+                if (curr_player == 1 && win == false)
                 {
-                    sLine = reader.ReadLine(); //read line for every loop iteration
-
-                    foreach (char letter in sLine)
+                    Console.WriteLine("Enter your choice player {0}", curr_player);
+                    try
                     {
-                        //loop through chars on each line
-
-
-                        if (letter == target[next_index]) //compare char on line to char in target string
-                        {
-                            found_string += letter; //if a match add char in line to found_string placeholder
-                            next_index++; //move index to next index in target string if match was found on prior index
-                            //Console.WriteLine(found_string); //output found index for visual purposes (not needed)
-
-                            if (found_string == target) //if target string is located print results, line number and break loop
-                            {
-                                Console.WriteLine("Found string " + found_string + " on row " + line_number);
-
-                                stopwatch.Stop();
-                                Console.WriteLine(sLine);
-                                break;
-                            }
-
-                        }
-                        else //else reset index back to beginning and string placeholder to empty string
-                        {
-                            next_index = 0;
-                            found_string = "";
-                            // continue;
-                        }
-
+                        user_input = Int16.Parse(Console.ReadLine());
                     }
-                    if (found_string == target) //break out of while loop for each line
+                    catch (Exception) { }
+                    Console.Clear();
+                    UpdateBoard(board, p1_marker, user_input);
+                    CheckWin(board);
+                    if (CheckWin(board) == true)
                     {
+                        reset = ResetGame(board);
+                        if (reset == true)
+                        {
+                            board = ResetBoard();
+                            win = false;
+                        }
+                    }
+                    DisplayBoard(board);
+                    curr_player = 2;
+
+                   
+                }
+                //game logic for player 2
+                else if (curr_player == 2 && win == false)
+                {
+                    Console.WriteLine("Enter your choice player {0}", curr_player);
+                    try
+                    {
+                        user_input = Int16.Parse(Console.ReadLine());
+                    }
+                    catch (Exception) { }
+                    Console.Clear();
+                    UpdateBoard(board, p2_marker, user_input);
+                    CheckWin(board);
+                    if (CheckWin(board) == true)
+                    {
+                       reset = ResetGame(board);
+                        if (reset == true)
+                        {
+                            board = ResetBoard();
+                            win = false;
+                        }
+                    }
+                    DisplayBoard(board);
+                    curr_player = 1;
+                }
+
+            }
+            Console.Read();
+            
+            
+           
+
+            }
+        
+
+       
+
+
+
+        public static void UpdateBoard(char[,] brd, char p_marker, int p_choice)
+        {
+            switch (p_choice)
+            {
+                //verify user input and set player's x or o marker if area is not already occupied. 
+                case 1:
+                    if (brd[0,0]!= 'x' && brd[0, 0] != 'o')
+                    {
+                        brd[0, 0] = p_marker;
                         break;
                     }
                     else
                     {
-                        line_number++; //increase line number count and
-
-                    }
-
-                    if (sLine == null && found_string != target)
-                    {
-                        Console.WriteLine("Sorry, could not locate string in file"); //print if string could not be located
+                        Console.WriteLine("This spot is already occupied");
                         break;
                     }
-
-                }
-            }
-
-
-            void search2()
-            {
-                while (sLine != null)
-                {
-                    sLine = reader.ReadLine(); //read line for every loop iteration
-                    if (sLine == null)
-                    {
-                        Console.WriteLine("Sorry, this string pattern does not exist in this file");
-                        break; //break or you will get null object error...while loop for loop hasn't stopped yet???
-                    }
-                        // foreach (char letter in sLine)
-                        for (int i = 0; i <= sLine.Length - 1; i++)
-                        {
-                            //loop through chars on each line
-
-
-                            if (sLine[i] == target[next_index]) //compare char on line to char in target string
-                            {
-                                found_string += sLine[i]; //if a match add char in line to found_string placeholder
-                                next_index = next_index + 1; //move index to next index in target string if match was found on prior index
-
-
-                                if (found_string == target) //if target string is located print results, line number and break loop
-                                {
-                                    Console.WriteLine("Found string " + found_string + " on row " + line_number);
-
-                                    stopwatch.Stop();
-                                    Console.WriteLine(sLine);
-                                    break;
-                                }
-
-                            }
-
-                            else //else reset index back to beginning and string placeholder to empty string
-                            {
-                                next_index = 0;
-                                found_string = "";
-                                // continue;
-                            }
-
-                        }
-                        if (found_string == target) //break out of while loop for each line
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            line_number++; //increase line number count and
-
-                        }
-
-                        if (sLine == null && found_string != target)
-                        {
-                            Console.WriteLine("Sorry, could not locate string in file"); //print if string could not be located
-                            break;
-                        }
-                       
                     
-
-                }
+                case 2:
+                    if (brd[0, 1] != 'x' && brd[0, 1] != 'o')
+                    {
+                        brd[0, 1] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                    
+                case 3:
+                    if (brd[0, 2] != 'x' && brd[0, 2] != 'o')
+                    {
+                        brd[0, 2] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break; 
+                    }
+                 
+                case 4:
+                    if (brd[1, 0] != 'x' && brd[1, 0] != 'o')
+                    {
+                        brd[1, 0] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                    
+                case 5:
+                    if (brd[1, 1] != 'x' && brd[1, 1] != 'o')
+                    {
+                        brd[1, 1] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                    
+                case 6:
+                    if (brd[1, 2] != 'x' && brd[1, 2] != 'o')
+                    {
+                        brd[1, 2] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                   
+                case 7:
+                    if (brd[2, 0] != 'x' && brd[2, 0] != 'o')
+                    {
+                        brd[2, 0] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                  
+                case 8:
+                    if (brd[2, 1] != 'x' && brd[2, 1] != 'o')
+                    {
+                        brd[2, 1] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                   
+                case 9:
+                    if (brd[2, 2] != 'x' && brd[2, 2] != 'o')
+                    {
+                        brd[2, 2] = p_marker;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This spot is already occupied");
+                        break;
+                    }
+                   
+                default:
+                    Console.WriteLine("Invalid input");
+                    Console.Read();
+                    break;
+                    
             }
-            //search1();
-            search2();
-            TimeSpan timeSpan = stopwatch.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-
-            Console.WriteLine("Time elapsed: " + elapsedTime );
-            reader.Close();
+            //Console.Read();
             
-            Console.ReadKey();
+        }
+
+
+
+        public static void DisplayBoard(char[,] brd)
+        {
+            Console.WriteLine("     |      |     ");
+            Console.WriteLine("  {0}  |  {1}   |   {2}", brd[0,0], brd[0,1], brd[0,2]);
+            Console.WriteLine("_____|______|______");
+            Console.WriteLine("     |      |     ");
+            Console.WriteLine("  {0}  |  {1}   |   {2}", brd[1, 0], brd[1, 1], brd[1, 2]);
+            Console.WriteLine("_____|______|______");
+            Console.WriteLine("     |      |     ");
+            Console.WriteLine("  {0}  |  {1}   |   {2}", brd[2, 0], brd[2, 1], brd[2, 2]);
+            Console.WriteLine("     |      |     ");
+            /*for (int row = 0; row < 3; row++)
+            {
+                
+                for (int col = 0; col < 3; col++)
+                {
+                    if (col == 2)
+                    {
+                        Console.WriteLine(" " + brd[row, col]);
+                    }
+                    else
+                    {
+                        Console.Write("   " + brd[row, col] + "   |");
+                    }
+                }
+                if(row < 2)
+                {
+
+                    Console.WriteLine("________________________");
+                }
+                
+                Console.WriteLine();
+            }*/
             
 
+        }
+
+        public static bool CheckWin(char[,] brd)
+        {
+            //check if player 1 wins
+            if (brd[0,0] == 'x' && brd[0,1] == 'x' && brd[0,2] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[0, 0] == 'x' && brd[1, 0] == 'x' && brd[2, 0] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[1, 0] == 'x' && brd[1, 1] == 'x' && brd[1, 2] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[2, 0] == 'x' && brd[2, 1] == 'x' && brd[2, 2] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[0, 1] == 'x' && brd[1, 1] == 'x' && brd[2, 1] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[1, 2] == 'x' && brd[1, 1] == 'x' && brd[2, 0] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+            else if (brd[0, 2] == 'x' && brd[1, 2] == 'x' && brd[2, 2] == 'x')
+            {
+                Console.WriteLine("Player 1 wins");
+                return true;
+            }
+
+            //check if player 2 wins
+            if (brd[0, 0] == 'o' && brd[0, 1] == 'o' && brd[0, 2] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[0, 0] == 'o' && brd[1, 0] == 'o' && brd[2, 0] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[1, 0] == 'o' && brd[1, 1] == 'o' && brd[1, 2] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[2, 0] == 'o' && brd[2, 1] == 'o' && brd[2, 2] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[0, 1] == 'o' && brd[1, 1] == 'o' && brd[2, 1] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[1, 2] == 'o' && brd[1, 1] == 'o' && brd[2, 0] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[0, 2] == 'o' && brd[1, 2] == 'o' && brd[2, 2] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else if (brd[0, 2] == 'o' && brd[1, 1] == 'o' && brd[2, 0] == 'o')
+            {
+                Console.WriteLine("Player 2 wins");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool ResetGame(char[,] brd)
+        {
+            Console.WriteLine("Do you want to play again? Press \"y\" to play again. \"n\" to exit");
+
+            string input = Console.ReadLine();
+            input.ToLower();
+            
+            if (input == "y")
+            {
+                //for conditional testing if player wants to continue.
+                return true;
+            }
+            else if (input == "n")
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static char[,] ResetBoard()
+        {
+            //reset board
+            char[,] board = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+            return board;
         }
     }
 }
